@@ -1,46 +1,34 @@
-import React, { useState } from "react";
-import { AsyncPaginate } from "react-select-async-paginate";
-import { Geo_Api_Options, BASE_URL_GEO } from "../apis";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Card from "./Card";
+import Form from "./Form";
+import { getPost } from "../api";
+import { useDispatch, useSelector } from "react-redux";
 
 const Search = () => {
-  const [search, setSearch] = useState("");
+  const { posts, isLoading } = useSelector((state) => state.post);
+  const dispatch = useDispatch();
 
-  const loadOptions = (inputValue) => {
-    return fetch(
-      `${BASE_URL_GEO}/cities?minPopulation=1000000&namePrefix=${inputValue}`,
-      Geo_Api_Options
-    )
-      .then((response) => response.json())
-      .then((response) => {
-        return {
-          options: response.data.map((city) => {
-            return {
-              label: `${city.name}`,
-            };
-          }),
-        };
-      });
-  };
+  
 
-  const handleChange = async (searchData) => {
-    setSearch(searchData.label);
-    // onSearchChange(searchData);
-    const data = await axios.post(
-      "http://localhost:5000/getCityinfo",
-      searchData
-    );
-  };
+  console.log(posts);
+
+  useEffect(() => {
+    dispatch(getPost());
+  }, []);
 
   return (
     <>
-      <AsyncPaginate
-        placeholder="Enter the city"
-        value={search}
-        debounceTimeout={600}
-        onChange={handleChange}
-        loadOptions={loadOptions}
-      />
+      <section className="flex justify-center">
+        <div className="flex justify-start gap-4 flex-wrap w-[70%]">
+          {posts?.map((item) => {
+            return <Card item={item} key={item._id} />;
+          })}
+        </div>
+
+        <div className="w-[25%]">
+          <Form />
+        </div>
+      </section>
     </>
   );
 };

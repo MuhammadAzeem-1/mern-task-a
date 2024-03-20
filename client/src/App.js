@@ -1,5 +1,5 @@
-import Search from "./component/Search";
-import Navbar from "./component/Navbar";
+import Search from "./component/Search.jsx";
+import Navbar from "./component/Navbar.jsx";
 import axios from "axios";
 import {
   BrowserRouter as Router,
@@ -8,18 +8,19 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./index.css";
-import Form from "./component/Form";
+import Auth from "./component/Auth.jsx";
 
 function App() {
   return (
     <div className="container">
+      <p>abc</p>
       <Router>
         <div>
           <Navbar />
         </div>
         <Routes>
           <Route path="/" element={<Search />} />
-          <Route path="/form" element={<Form />} />
+          <Route path="/form" element={<Auth />} />
         </Routes>
       </Router>
     </div>

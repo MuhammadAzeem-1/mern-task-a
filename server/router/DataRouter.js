@@ -24,6 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.route("/formdatapost").post(upload.single("image"), postNewFormData);
+
 router.route("/getCityinfo").post(getCityInfo);
 
 module.exports = router;

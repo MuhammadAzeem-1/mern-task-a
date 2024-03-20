@@ -1,155 +1,88 @@
 import React, { useState } from "react";
-import axios from "axios";
-
-const InputField = ({ label, name, value, onChange }) => (
-  <div className="flex flex-col items-start text-[#bfbdbd] gap-2 my-4">
-    <label>{label}</label>
-
-    <input
-      type="text"
-      name={name}
-      value={value}
-      className="bg-[#e4f4f5] p-4 w-full text-[black]"
-      onChange={onChange}
-    />
-  </div>
-);
+import { useDispatch, useSelector } from "react-redux";
+import { createNewPost, getPost } from "../api";
 
 const Form = () => {
-  const [response, setResponse] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    city: "",
-    papulation: "",
-    language: "",
-    festival: "",
-    date: "",
-    des: "",
-    image: "",
+  const dispatch = useDispatch();
+
+  const [postData, setPostData] = useState({
+    title: "",
+    message: "",
+    selectedFile: "",
   });
 
-  const handleFormSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const data = await axios.post(
-      "http://localhost:5000/formdatapost",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+    dispatch(createNewPost(postData));
 
-    console.log(data);
-    if (data.data === "Sucess") {
-      setResponse(true);
-    }
+    setTimeout(() => {
+      dispatch(getPost());
+    }, 2000);
 
-    setFormData({
-      name: "",
-      city: "",
-      papulation: "",
-      language: "",
-      festival: "",
-      date: "",
-      des: "",
-      image: "",
-    });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
+    setPostData({
+      title: "",
+      message: "",
+      selectedFile: "",
     });
   };
 
   return (
-    <div>
-      <div className="flex justify-center items-center ">
-        <form action="submit" onSubmit={handleFormSubmit}>
-          <InputField
-            label="Your Name"
-            name={"name"}
-            value={formData.name}
-            onChange={handleChange}
+    <div className="block max-w-sm rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ">
+      <form onSubmit={handleSubmit}>
+        <div className="flex gap-2 flex-col ">
+          <label
+            htmlFor="title"
+            className="text-black font-medium text-[18px] tracking-wide	"
+          >
+            Title
+          </label>
+
+          <input
+            type="text"
+            id="title"
+            required
+            name="title"
+            value={postData.title}
+            onChange={(e) =>
+              setPostData({ ...postData, title: e.target.value })
+            }
+            className="bg-[#e4f4f5] p-2 w-full text-[black]"
           />
+        </div>
 
-          <InputField
-            label="City Name"
-            name={"city"}
-            value={formData.city}
-            onChange={handleChange}
+        <div className="flex gap-2 flex-col ">
+          <label
+            htmlFor="message"
+            className="text-black font-medium text-[18px] tracking-wide	"
+          >
+            Message
+          </label>
+
+          <textarea
+            type="text"
+            id="message"
+            required
+            name="message"
+            value={postData.message}
+            onChange={(e) =>
+              setPostData({ ...postData, message: e.target.value })
+            }
+            className="bg-[#e4f4f5] p-4 w-full text-[black]"
           />
+        </div>
 
-          <InputField
-            label="population"
-            name={"papulation"}
-            value={formData.papulation}
-            onChange={handleChange}
-          />
+        <div className="my-4">
+          <input type="file" name="file" id="" />
+        </div>
 
-          <InputField
-            label="Language"
-            name={"language"}
-            value={formData.language}
-            onChange={handleChange}
-          />
-
-          <div className="flex justify-start gap-8 ">
-            <InputField
-              label="festival in Your City"
-              name={"festival"}
-              value={formData.festival}
-              onChange={handleChange}
-            />
-
-            <div className="flex items-center">
-              <div className="flex flex-col items-start text-[#bfbdbd] gap-2 my-4">
-                <label>start Date</label>
-                <input
-                  name="date"
-                  value={formData.date}
-                  type="date"
-                  onChange={handleChange}
-                  className="bg-[#e4f4f5] p-4 w-full text-[black]"
-                />
-
-              </div>
-            </div>
-          </div>
-          {/*  */}
-          <div className="flex flex-col items-start text-[#bfbdbd] gap-2 my-4">
-            <label>Tell us more about your city</label>
-            <textarea
-              name="des"
-              value={formData.des}
-              onChange={handleChange}
-              className="bg-[#e4f4f5] p-4 w-full text-[black]"
-            ></textarea>
-          </div>
-
-          <div>
-            <input
-              name="image"
-              value={formData.image}
-              type="file"
-              onChange={handleChange}
-            />
-          </div>
-
-          {response ? (
-            <strong className="bg-p[#db4444">Data Submit</strong>
-          ) : null}
-
-          <div className="my-4 flex justify-center tab-lg:inline-block">
-            <button className="text-[16px]  py-1  bg-[#db4444] px-8 tab:py-2 capitalize rounded text-white ">
-              Submit
-            </button>
-            
-          </div>
-        </form>
-      </div>
+        <button
+          type="submit"
+          className="inline-block rounded bg-primary my-2 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white  bg-blue-500"
+        >
+          submit
+        </button>
+      </form>
     </div>
   );
 };
